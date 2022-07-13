@@ -1,13 +1,15 @@
 const bcrypt = require('bcrypt');
 
-let success = false;
-
-const { passwordLength, emailRegex } = require('../../config/parameters');
+const {
+	passwordLength,
+	emailRegex,
+	passwordAttemptLimit,
+} = require('../../config/parameters');
 const authentication = (router, here, Model) => {
 	router.post(`/${here}/subscribe`, (req, res) => {
-		console.log('POST /subscribe req.body:', req.body);
 		let errors = [];
-		const { password, passwordConfirmation } = req.body;
+		console.log('POST /subscribe req.body:', req.body);
+		let success = false;
 
 		const email =
 			req.body.email !== undefined
@@ -17,6 +19,7 @@ const authentication = (router, here, Model) => {
 			req.body.emailConfirmation !== undefined
 				? req.body.emailConfirmation.toLowerCase()
 				: undefined;
+		const { password, passwordConfirmation } = req.body;
 
 		/* inputs verification */
 		// email verifications
@@ -28,7 +31,7 @@ const authentication = (router, here, Model) => {
 				const newError = 'Incorrect email format';
 				errors.push(newError);
 			}
-			if (email !== emailConfirmation) {
+			if (emailConfirmation && email !== emailConfirmation) {
 				const newError = `Emails aren't the same.`;
 				errors.push(newError);
 			}
@@ -38,6 +41,8 @@ const authentication = (router, here, Model) => {
 			errors.push(newError);
 		}
 		// end email verifications
+
+		// password verifications
 		if (!password || !passwordConfirmation) {
 			if (!password) {
 				const newError = `Password is missing`;
@@ -61,7 +66,12 @@ const authentication = (router, here, Model) => {
 			}
 		}
 		// end password verifications
+
+		// send errors
+		// end send errors
+
 		/* end inputs verification */
+
 		Model.findOne({ email }).exec((err, user) => {
 			const saltRounds = 7;
 			if (err) {
@@ -73,8 +83,15 @@ const authentication = (router, here, Model) => {
 				return;
 			}
 			if (user) {
-				const newError = 'User name or email already exists';
-				errors.push(newError);
+				const newError = 'Email already exists';
+				errors.unshift(newError);
+				const data = errors;
+				const response = { success, data };
+				res.json(response);
+				return;
+			}
+			if (errors.length > 0) {
+				success = false;
 				const data = errors;
 				const response = { success, data };
 				res.json(response);
@@ -122,6 +139,97 @@ const authentication = (router, here, Model) => {
 						res.json(response);
 					});
 				});
+			});
+		});
+	});
+	router.post(`/${here}/login`, (req, res) => {
+		let errors = [];
+		console.log('POST auth/login', req.body);
+		let success = false;
+		const { email, password } = req.body;
+
+		Model.findOne({ email }).exec((err, user) => {
+			if (err) {
+				const newError = err.toString();
+				errors.push(newError);
+				const data = errors;
+				const response = { success, data };
+				res.json(response);
+				return;
+			}
+			if (
+				!user ||
+				user === '' ||
+				(!user?.isActive && user?.emailValidated)
+			) {
+				const newError = `User not found or inactive account.`;
+				errors.push(newError);
+				const data = errors;
+				const response = { success, data };
+				res.json(response);
+				return;
+			}
+			const dbHashedPassword = user.password.hash;
+			bcrypt.compare(password, dbHashedPassword, (err, testResult) => {
+				if (err) {
+					const newError = err.toString();
+					errors.push(newError);
+					const data = errors;
+					const response = { success, data };
+					res.json(response);
+					return;
+				} else if (testResult === true) {
+					/* login processus */
+					const { _id, email, emailValidated, isAdmin } = user;
+					Model.findOneAndUpdate(
+						{ email },
+						{ $set: { passwordAttempt: 0 } }
+					).exec();
+					let datas = {
+						email,
+						emailValidated,
+						isAdmin,
+					};
+					/* send users datas */
+					const success = true;
+					data = { ...datas }; // send datas
+					const response = { success, data };
+					res.json(response);
+					return;
+				} else {
+					Model.findOne({ email }).exec((err, user) => {
+						error = 'User or password error';
+						const { passwordAttempt } = user;
+						if (passwordAttempt >= passwordAttemptLimit) {
+							error =
+								'User account is inactive, please contact support';
+						}
+						if (err) {
+							const newError = err.toString();
+							errors.push(newError);
+							const data = errors;
+							const response = { success, data };
+							res.json(response);
+						} else {
+							const datas = {
+								passwordAttempt: passwordAttempt + 1,
+							};
+							'POST auth/login wrong password passwordAttempt',
+								passwordAttempt;
+							passwordAttempt === passwordAttemptLimit - 1 &&
+								(datas.isActive = false);
+							Model.findOneAndUpdate({ email }, { $set: datas })
+								.exec()
+								.then(() => {
+									errors.push(error);
+									const data = errors;
+									const response = { success, data };
+									res.json(response);
+									return;
+								});
+						}
+					});
+				}
 			});
 		});
 	});

@@ -1,5 +1,6 @@
 const emailLength = { min: 5, max: 256 };
 const passwordLength = { min: 8, max: 128 };
+const passwordAttemptLimit = 10;
 const emailRegex = /^[^@\s]+@[^@.\s]+\.[^@.\s]+$/;
 const passwordRegexHigh = new RegExp(
 	`^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s)[0-9a-zA-Z!*^?](?=.*[\\&\\"\\'\\(\\_\\)\\#\\{\\[\\|\\@\\]\\}\\°\\/\\*\\-\\+\\,\\?\\;\\.\\:\\/\\!\\§\\%\\$\\£\\\\]).{${passwordLength.min},${passwordLength.max}}$`

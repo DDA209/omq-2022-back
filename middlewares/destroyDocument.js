@@ -61,6 +61,7 @@ const destroyDocument = (Model, here, req, res) => {
 				dbLog(logDatas);
 				/* end record log */
 
+				console.info(response);
 				res.json(response);
 				return response;
 			}
@@ -92,6 +93,7 @@ const destroyDocument = (Model, here, req, res) => {
 					const data = theError.toString();
 					const response = { success, data };
 
+					console.info(response);
 					res.json(response);
 					return response;
 				}
@@ -118,6 +120,7 @@ const destroyDocument = (Model, here, req, res) => {
 				success = true;
 				const response = { success, data: { isDeleted: true } };
 
+				console.info(response);
 				res.json(response);
 				return response;
 			});

@@ -149,6 +149,11 @@ const authentication = (router, here, Model) => {
 		const { email, password } = req.body;
 
 		Model.findOne({ email }).exec((err, user) => {
+			console.log(
+				'search existing account:',
+				user,
+				err && `- error: ${err}`
+			);
 			if (err) {
 				const newError = err.toString();
 				errors.push(newError);
@@ -168,7 +173,23 @@ const authentication = (router, here, Model) => {
 				const response = { success, data };
 				res.json(response);
 				return;
+			} else if (!user.emailValidated && !user.isAdmin) {
+				const newError = `User email hasn't been validated.`;
+				errors.push(newError);
+				const data = errors;
+				const response = { success, data };
+				res.json(response);
+				return;
 			}
+			//  else if (!user.emailValidated && user.isAdmin) {
+			// 	const newError = `Admin email not validated.`;
+			// 	success = false;
+			// 	errors.push(newError);
+			// 	const data = errors;
+			// 	const response = { success, data };
+			// 	res.json(response);
+			// 	return;
+			// }
 			const dbHashedPassword = user.password.hash;
 			bcrypt.compare(password, dbHashedPassword, (err, testResult) => {
 				if (err) {
@@ -186,6 +207,7 @@ const authentication = (router, here, Model) => {
 						{ $set: { passwordAttempt: 0 } }
 					).exec();
 					let datas = {
+						_id,
 						email,
 						emailValidated,
 						isAdmin,

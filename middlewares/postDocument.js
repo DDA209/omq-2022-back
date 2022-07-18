@@ -29,7 +29,7 @@ const postDocument = (Model, here, req, res) => {
 			dbLog(logDatas);
 			/* end record log */
 
-			console.log('saveDocument error', theError);
+			console.info(response);
 			return res.json(response);
 		} else {
 			new Model(datas).save((err, document) => {
@@ -47,6 +47,7 @@ const postDocument = (Model, here, req, res) => {
 					dbLog(logDatas);
 					/* end record log */
 
+					console.info(response);
 					return res.json(response);
 					/* end errors check */
 				} else {
@@ -62,6 +63,7 @@ const postDocument = (Model, here, req, res) => {
 					dbLog(logDatas);
 					/* end record log */
 
+					console.info(response);
 					return res.json(response);
 				}
 			});
@@ -103,6 +105,7 @@ const postDocument = (Model, here, req, res) => {
 		dbLog(logDatas);
 		/* end record log */
 
+		console.info(response);
 		return res.json(response);
 	}
 

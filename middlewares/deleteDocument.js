@@ -11,7 +11,6 @@ const dbLog = require('./core/dbLog');
 const deleteDocument = (Model, here, req, res) => {
 	console.log('DELETE params');
 	const _id = req.params.id;
-
 	/* collecting elements for logs */
 	const user = 'developper';
 	const request = JSON.stringify({
@@ -54,6 +53,7 @@ const deleteDocument = (Model, here, req, res) => {
 			dbLog(logDatas);
 			/* end record log */
 
+			console.info(response);
 			res.json(response);
 			return response;
 		}
@@ -78,6 +78,7 @@ const deleteDocument = (Model, here, req, res) => {
 					dbLog(logDatas);
 					/* end record log */
 
+					console.info(response);
 					res.json(response);
 					return response;
 				}
@@ -95,6 +96,7 @@ const deleteDocument = (Model, here, req, res) => {
 				});
 				/* end record log */
 
+				console.info(response);
 				res.json(response);
 				return response;
 			}

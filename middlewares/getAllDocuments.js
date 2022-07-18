@@ -25,13 +25,15 @@ const getAllDocuments = (Model, here, res, skip, limit) => {
 				const success = false;
 				const data = theError.toString();
 				const response = { success, data };
-				// console.log('#getAllDocuments error', response);
+
+				console.info(response);
 				return res.json(response);
 			} else if (documents.length < 1) {
 				const success = false;
 				const data = 'no document found';
 				const response = { success, data };
-				// console.log('#getAllDocuments no document', response);
+
+				console.info(response);
 				return res.json(response);
 				/* end errors check */
 			} else {
@@ -50,6 +52,7 @@ const getAllDocuments = (Model, here, res, skip, limit) => {
 				const success = true;
 				const response = { success, data };
 
+				console.info(response);
 				return res.json(response);
 			}
 		});

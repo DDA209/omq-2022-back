@@ -21,7 +21,7 @@ const schema = new mongoose.Schema({
 		type: Boolean, // vegetable, fruit, fish, meet ....
 		required: true,
 		unique: false,
-		default: true,
+		default: false,
 	},
 	isActive: {
 		type: Boolean,

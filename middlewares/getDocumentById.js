@@ -36,6 +36,7 @@ const getDocumentById = (Model, here, req, res) => {
 				if (!res) {
 					return response;
 				} else {
+					console.info(response);
 					return res.json(response);
 				}
 			}
@@ -44,6 +45,7 @@ const getDocumentById = (Model, here, req, res) => {
 			const data = document;
 
 			response = { success, data };
+			console.info(response);
 			return res.json(response);
 		});
 };

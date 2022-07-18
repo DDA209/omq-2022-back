@@ -3,10 +3,10 @@ const createPopulationTree = require('../utils/createPopulationTree');
 const util = require('util');
 /**
  * Get a document from database with query information
- * @param { function } Model	to use for finding
- * @param { string } here				microservice name
- * @param { object } req				origin request
- * @param { object } res				response to send
+ * @param { function } Model to use for finding
+ * @param { string } here microservice name
+ * @param { object } req origin request
+ * @param { object } res response to send
  */
 const getDocumentsByQuery = async (Model, here, req, res) => {
 	// const _id = req.params.id
@@ -38,17 +38,23 @@ const getDocumentsByQuery = async (Model, here, req, res) => {
 				success = false;
 				data = theError.toString();
 				response = { success, data };
+
+				console.info(response);
 				return res.json(response);
 			} else if (documents.length < 1) {
 				success = false;
 				data = 'no document found';
 				response = { success, data };
+
+				console.info(response);
 				return res.json(response);
 				/* end errors check */
 			} else {
 				success = true;
 				data = documents;
 				response = { success, data };
+
+				console.info(response);
 				return res.json(response);
 			}
 		});

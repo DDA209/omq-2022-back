@@ -55,6 +55,7 @@ const putDocument = (Model, here, req, res, populationModels) => {
 			dbLog(logDatas);
 			/* end record log */
 
+			console.info(response);
 			return res.json(response);
 		} else {
 			Model.updateOne({ _id }, { $set: datas }, (err, document) => {
@@ -72,6 +73,7 @@ const putDocument = (Model, here, req, res, populationModels) => {
 					dbLog(logDatas);
 					/* end record log */
 
+					console.info(response);
 					return res.json(response);
 
 					/* end errors check */
@@ -87,7 +89,7 @@ const putDocument = (Model, here, req, res, populationModels) => {
 						dbLog(logDatas);
 					});
 					/* end record log */
-					console.log('putDocument.js RESPONSE', response);
+					console.info(response);
 					return res.json(response);
 				}
 			});
@@ -113,6 +115,7 @@ const putDocument = (Model, here, req, res, populationModels) => {
 			dbLog(logDatas);
 			/* end record log */
 
+			console.info(response);
 			return res.json(response);
 		}
 		/* end errors check */

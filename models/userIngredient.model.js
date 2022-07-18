@@ -10,13 +10,13 @@ const schema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, // is user ID only enough?
 		ref: 'user',
 		required: true,
-		unique: true,
+		unique: false,
 	},
 	ingredient: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'ingredient',
 		required: true,
-		unique: true,
+		unique: false,
 	},
 	quantity: {
 		type: Number, // in gram
@@ -24,5 +24,7 @@ const schema = new mongoose.Schema({
 		unique: false,
 	},
 });
+
+schema.index({ user: 1, ingredient: 1 }, { unique: true });
 
 module.exports = mongoose.model(collection, schema);
